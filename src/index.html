@@ -6,25 +6,44 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title id="title">The Yield Curve Crystal Ball</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="index.css">
     </head>
+    <style>
+        img {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        </style>
     <body>
-        <header>
-            <h1>The Yield Curve Crystal Ball</h1>
-        </header>       
-        <p>Four buttons in a group:</p>
-        <div class="btn-group" style="width:100%">
-          <button style="width:25%">Apple</button>
-          <button style="width:25%">Samsung</button>
-          <button style="width:25%">Sony</button>
-          <button style="width:25%">HTC</button>
+        <div class="container" style="width:1600px">
+            <div class="row">
+                <div style="text-align:center;font-family:adobe-caslon-pro;font-size:200%;font-weight:bold">
+                    The Yield Curve Crystal Ball
+                </div>
+            </div>
+            <div class="row">
+                <img src="img/crystalball.jpeg" width="300px" class="center">
+            </div>
+            <div class="row" id="pages" style="text-align:center">
+                <!-- reserved for buttons -->
+            </div>
+            <div class="row">
+                <svg class = "chart"></svg>
+            </div>
+            <!-- <div class="row">
+                <footer style="font-size:25%;text-align:right">Created by @dr_keithmcnulty. Github: <a href="https://www.github.com/keithmcnulty/uk_election_bubble">keithmcnulty/uk_election_bubble</a>. Source: UK Parliament, Statistica, Wikipedia</footer>
+            </div> -->
+            
+            </div>
+            </div>
         </div>
-        <svg></svg>
-        
         <script src="./dataviz.js"></script>
     </body>
 </html>
