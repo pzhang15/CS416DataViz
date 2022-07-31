@@ -31,15 +31,20 @@ const GDP = ["1.66198","1.25078","0.85874","0.99938","0.92582","1.25276","1.6161
 const TOTAL_SLIDS = 4;
 const PER_SLIDE_LENGTH = Math.floor(DATE.length /4);
 
-const DATA = []
+const DATA1997 = []
+const DATA2004 = []
+const DATA2010 = []
+const DATA2017 = []
 for (let i = 0;i < DATE.length; i ++){
   obj = {
     date: DATE[i],
     yield: T10Y2Y[i],
-    gdp: GDP[i],
-    selectedGroup: Math.floor(i /PER_SLIDE_LENGTH)
+    gdp: GDP[i]
   }
-  DATA.push(obj)
+  if (i <= PER_SLIDE_LENGTH) DATA1997.push(obj);
+  if (i > PER_SLIDE_LENGTH && i <= 2 * PER_SLIDE_LENGTH) DATA2004.push(obj);
+  if (i > 2 * PER_SLIDE_LENGTH && i <= 3 * PER_SLIDE_LENGTH) DATA2010.push(obj);
+  if (i > 3 * PER_SLIDE_LENGTH && i <= 4 * PER_SLIDE_LENGTH) DATA2017.push(obj);
 }
 
 var parseTime = d3.timeParse("%m/%d/%y");
@@ -47,61 +52,16 @@ var parseTime = d3.timeParse("%m/%d/%y");
 var margin = {top: 10, right: 100, bottom: 30, left: 30};
 var width = 460 - margin.left - margin.right;
 var height = 400 - margin.top - margin.bottom;
-var svg = d3.select(".chart")
+
+
+function drawplots(data, chartId){
+  //prepare our date axis domain
+  var svg = d3.select(chartId)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
-
-function plotdata(data, x, y){
-  svg.append('g')
-  .append("path")
-    .datum(data)
-    .attr("d", d3.line()
-      .x(function(d) { return x(parseTime(d.date)) })
-      .y(function(d) { return y(+d.yield) })
-    )
-    .attr("stroke", "black")
-    .style("stroke-width", 4)
-    .style("fill", "none")
-
-  svg.selectAll('circle')
-  .data(data)
-  .enter()
-  .append('circle')
-    .attr("cx", function(d) { 
-      var ret = x(parseTime(d.date));
-      return ret
-    })
-    .attr("cy", function(d) { return y(+d.yield) })
-    .attr("r", 7)
-    .style("fill", "#69b3a2")
-  
-
-    svg.append('g')
-    .append("path")
-      .datum(data)
-      .attr("d", d3.line()
-        .x(function(d) { return x(parseTime(d.date)) })
-        .y(function(d) { return y(+d.gdp) })
-      )
-      .attr("stroke", "black")
-      .style("stroke-width", 4)
-      .style("fill", "none")
-  
-    svg.selectAll('circle2')
-    .data(data)
-    .enter()
-    .append('circle')
-      .attr("cx", function(d) { return x(parseTime(d.date));})
-      .attr("cy", function(d) { return y(+d.gdp) })
-      .attr("r", 7)
-      .style("fill", "red")
-}
-function darwAxis(data){
-  //prepare our date axis domain
-
   var dates = [];
   for (let obj of data) {
     dates.push(parseTime(obj.date));
@@ -132,25 +92,80 @@ function darwAxis(data){
    .text("Dates");
   /*********DRAW YAxis***********/
   var percentage = [];
+  var min = 0
   for (let obj of data) {
-    percentage.push(obj.yield);
-    percentage.push(obj.gdp);
+    percentage.push(parseFloat(obj.yield));
+    percentage.push(parseFloat(obj.gdp));
   }
   var domain = d3.extent(percentage);
-
+  domain = [domain[0], domain[1]];
   var y = d3.scaleLinear()
     .domain(domain)
-    .range([ height, 0 ]);
+    .range([ height, 50 ]);
     svg.append("g")
     .call(d3.axisLeft(y));
 
   /*********PLOT DATA***********/
-  plotdata(data, x, y)
- 
+  svg.append('g')
+  .append("path")
+    .datum(data)
+    .attr("d", d3.line()
+      .x(function(d) { return x(parseTime(d.date)) })
+      .y(function(d) { return y(+d.yield) })
+    )
+    .attr("stroke", "black")
+    .style("stroke-width", 4)
+    .style("fill", "none")
+
+  svg.selectAll('circle')
+  .data(data)
+  .enter()
+  .append('circle')
+    .attr("cx", function(d) { 
+      var ret = x(parseTime(d.date));
+      return ret
+    })
+    .attr("cy", function(d) { return y(+d.yield) })
+    .attr("r", 7)
+    .style("fill", "blue")
+  
+
+    svg.append('g')
+    .append("path")
+      .datum(data)
+      .attr("d", d3.line()
+        .x(function(d) { return x(parseTime(d.date)) })
+        .y(function(d) { return y(+d.gdp) })
+      )
+      .attr("stroke", "black")
+      .style("stroke-width", 4)
+      .style("fill", "none")
+
+    svg.append('g')
+      .append("path")
+        .datum(data)
+        .attr("d", d3.line()
+          .x(function(d) { return x(parseTime(d.date)) })
+          .y(function(d) { return y(+0) })
+        )
+        .attr("stroke", "black")
+        .style("border-top", "dotted 1px")
+    
+    svg.selectAll('circle2')
+    .data(data)
+    .enter()
+    .append('circle')
+      .attr("cx", function(d) { return x(parseTime(d.date));})
+      .attr("cy", function(d) { return y(+d.gdp) })
+      .attr("r", 7)
+      .style("fill", "red")
 }
 var data = [
   {date: '4/1/97', yield: '0.42375', gdp: '1.66198'},
   {date: '7/1/97', yield: '0.3384375', gdp: '1.25078'},
   {date: '7/1/98', yield: '0.171774194', gdp: '0.85874'},
 ];
-darwAxis(data);
+drawplots(DATA1997, "#chart1997");
+drawplots(DATA2004, "#chart2004");
+drawplots(DATA2010, "#chart2010");
+drawplots(DATA2017, "#chart2017");
