@@ -75,11 +75,17 @@ div.tooltip {
   /* Position the "next button" to the right */
   .next {
     right: 0;
+    top: 40%;
     border-radius: 3px 0 0 3px;
+    background-color: #717171;
+
   }
   .prev {
     left: 0;
+    top: 40%;
     border-radius: 3px 0 0 3px;
+    background-color: #717171;
+
   }
   /* On hover, add a black background color with a little bit see-through */
   .prev:hover, .next:hover {

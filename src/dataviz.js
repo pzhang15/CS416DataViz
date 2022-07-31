@@ -38,8 +38,8 @@ const DATA2017 = []
 for (let i = 0;i < DATE.length; i ++){
   obj = {
     date: DATE[i],
-    yield: T10Y2Y[i],
-    gdp: GDP[i]
+    yield: parseFloat(T10Y2Y[i]),
+    gdp: parseFloat(GDP[i])
   }
   if (i <= PER_SLIDE_LENGTH) DATA1997.push(obj);
   if (i > PER_SLIDE_LENGTH && i <= 2 * PER_SLIDE_LENGTH) DATA2004.push(obj);
@@ -54,7 +54,7 @@ var width = 1000
 var height = 800
 
 
-function drawplots(data, chartId){
+function drawplots(data, chartId, narration){
   //prepare our date axis domain
   var svg = d3.select(chartId)
     .attr("width", width)
@@ -111,6 +111,33 @@ function drawplots(data, chartId){
    .attr("fill", "black")
    .text("Percentage%");
 
+   svg.selectAll("gdplinelegend")
+      .data(data)
+      .enter()
+      .filter(function(d, i) { return i == data.length - 1 })
+      .append("text")
+      .text(function(d) { 
+        return "GDP % Change vs. Time"
+      })
+      .attr("x", function (d) { return  x(parseTime(d.date)) + 10; })
+      .attr("y", function (d) { return  y(+d.gdp) - 20; })
+      .style('fill', 'red')
+      .attr("font-weight", 300)
+
+    svg.selectAll("yieldCurvelinelegend")
+      .data(data)
+      .enter()
+      .filter(function(d, i) { return i == data.length - 1 })
+      .append("text")
+      .text(function(d) { 
+        return "10Y Minus 2Y Yield vs. Time"
+      })
+      .attr("x", function (d) { return  x(parseTime(d.date)) + 10; })
+      .attr("y", function (d) { return  y(+d.yield) - 20; })
+      .style('fill', 'blue')
+      .attr("font-weight", 300)
+
+
    /********* Create Tool Tip***********/
    var tooltip = d3.select("body")
    .append("div")
@@ -118,7 +145,6 @@ function drawplots(data, chartId){
    .style("z-index", "10")
    .style("visibility", "hidden")
    .style("background", "white")
-   .text("a simple tooltip");
    // Three function that change the tooltip when user hover / move / leave a cell
   
   /*********PLOT DATA***********/
@@ -129,11 +155,11 @@ function drawplots(data, chartId){
       .x(function(d) { return x(parseTime(d.date)) })
       .y(function(d) { return y(+d.yield) })
     )
-    .attr("stroke", "black")
+    .attr("stroke", "#0335fc")
     .style("stroke-width", 4)
     .style("fill", "none")
 
-  svg.selectAll('circle')
+  var yieldCircle = svg.selectAll('circle')
   .data(data)
   .enter()
   .append('circle')
@@ -144,7 +170,11 @@ function drawplots(data, chartId){
     .attr("cy", function(d) { return y(+d.yield) })
     .attr("r", 7)
     .style("fill", "blue")
-  
+    .on("mouseover", function(d){tooltip.text(d); return tooltip.style("visibility", "visible");})
+    .on("mousemove", function(event, d){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px").
+    text(d.date + ": " + d3.format(",.2f")(d.yield) + " 10Y-2Y Yield%");})
+    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+
 
     svg.append('g')
     .append("path")
@@ -153,7 +183,7 @@ function drawplots(data, chartId){
         .x(function(d) { return x(parseTime(d.date)) })
         .y(function(d) { return y(+d.gdp) })
       )
-      .attr("stroke", "black")
+      .attr("stroke", "#fc3903")
       .style("stroke-width", 4)
       .style("fill", "none")
 
@@ -167,7 +197,7 @@ function drawplots(data, chartId){
         .attr("stroke", "black")
         .style("border-top", "dotted 1px")
     
-    svg.selectAll('circle2')
+    var gdpCircle = svg.selectAll('circle2')
     .data(data)
     .enter()
     .append('circle')
@@ -176,16 +206,77 @@ function drawplots(data, chartId){
       .attr("r", 7)
       .style("fill", "red")
       .on("mouseover", function(d){tooltip.text(d); return tooltip.style("visibility", "visible");})
-      .on("mousemove", function(event, d){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px").text(d.gdp);})
+      .on("mousemove", function(event, d){return tooltip.style("top", (event.pageY-20)+"px").style("left",(event.pageX+20)+"px").text(d.date +  ": " + d3.format(",.2f")(d.gdp) + " GDP % change ");})
       .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
+
+
+
+    
+    /********* Create Persistent***********/
+    var minInversionIdx = 0;
+    var minInversion = 10;
+    for(let i=0; i<data.length; i++) {
+      if (data[i].yield < minInversion){
+        minInversion = data[i].yield
+        minInversionIdx = i;
+      }
+    }
+    var minGDP = 10;
+    var minGDPIdx = 0;
+    for(let i=0; i<data.length; i++) {
+      if (data[i].gdp < minGDP){
+        minGDP = data[i].gdp;
+        minGDPIdx = i
+      }
+    }  
+
+    svg.selectAll("persistantlegendsTitle")
+      .data(data)
+      .enter()
+      .filter(function(d, i) { return i == minGDPIdx })
+      .append("text")
+      .text(function(d) { 
+        return narration.title;
+      })
+      .attr("x", function (d) { return  x(parseTime(d.date)) + 20; })
+      .attr("y", function (d) { return  y(+d.gdp) - 50; })
+      .style('fill', 'darkOrange')
+      .attr("font-weight", 300)
+
+    svg.selectAll("persistantlegendsText")
+    .data(data)
+    .enter()
+    .filter(function(d, i) { return i == minGDPIdx })
+    .append("text")
+    .text(function(d) { 
+      return narration.text + d.gdp;
+    })
+    .attr("x", function (d) { return  x(parseTime(d.date)) + 20; })
+    .attr("y", function (d) { return  y(+d.gdp) - 30; })
+    
+
 }
-var data = [
-  {date: '4/1/97', yield: '0.42375', gdp: '1.66198'},
-  {date: '7/1/97', yield: '0.3384375', gdp: '1.25078'},
-  {date: '7/1/98', yield: '0.171774194', gdp: '0.85874'},
-];
-drawplots(DATA1997, "#chart1997");
-drawplots(DATA2004, "#chart2004");
-drawplots(DATA2010, "#chart2010");
-drawplots(DATA2017, "#chart2017");
+var narration = [
+  {
+    title: "The DotCom Bubble",
+    text: "The US Entered Peak Recessions with GDP: "
+  }, 
+  {
+    title: "Subprime Mortage Crisis",
+    text: "The US Entered Peak Recessions with GDP: "
+  },
+  {
+    title: "Peceful 10 years",
+    text: "The US Entered Peak Recessions with GDP: "
+  },
+  {
+    title: "COVID 19 Crisis",
+    text: "The US Entered Peak Recessions with GDP: "
+  },
+
+]
+drawplots(DATA1997, "#chart1997", narration[0]);
+drawplots(DATA2004, "#chart2004", narration[1]);
+drawplots(DATA2010, "#chart2010", narration[2]);
+drawplots(DATA2017, "#chart2017", narration[3]);
