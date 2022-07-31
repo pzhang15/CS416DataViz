@@ -26,12 +26,131 @@ const GDP = ["1.66198","1.25078","0.85874","0.99938","0.92582","1.25276","1.6161
             "0.13939","0.79165","0.71117","-0.35011","1.28413","1.16496","0.44899","0.81331","0.58","0.32337","0.14623","0.58918","0.30239","0.60112",
             "0.49689","0.47193","0.55976","0.71915","0.9404","0.76285","0.83391","0.48195","0.22314","0.59779","0.79292","0.6855","0.4691","-1.30358",
             "-8.93725","7.54753","1.11528","1.53389","1.64075","0.57095","1.68078","-0.39569","-0.23437"];
-var width = 500
-var height = 1500
 
-d3.csv("data/GDPC1.csv", function(data) {
-        for (var i = 0; i < data.length; i++) {
-            console.log(data[i].DATE);
-            console.log(data[i].GDPC1);
-        }
-    });
+
+const TOTAL_SLIDS = 4;
+const PER_SLIDE_LENGTH = Math.floor(DATE.length /4);
+
+const DATA = []
+for (let i = 0;i < DATE.length; i ++){
+  obj = {
+    date: DATE[i],
+    yield: T10Y2Y[i],
+    gdp: GDP[i],
+    selectedGroup: Math.floor(i /PER_SLIDE_LENGTH)
+  }
+  DATA.push(obj)
+}
+
+var parseTime = d3.timeParse("%m/%d/%y");
+/********* DRAW THE SVG CANVAS***********/
+var margin = {top: 10, right: 100, bottom: 30, left: 30};
+var width = 460 - margin.left - margin.right;
+var height = 400 - margin.top - margin.bottom;
+var svg = d3.select(".chart")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+function plotdata(data, x, y){
+  svg.append('g')
+  .append("path")
+    .datum(data)
+    .attr("d", d3.line()
+      .x(function(d) { return x(parseTime(d.date)) })
+      .y(function(d) { return y(+d.yield) })
+    )
+    .attr("stroke", "black")
+    .style("stroke-width", 4)
+    .style("fill", "none")
+
+  svg.selectAll('circle')
+  .data(data)
+  .enter()
+  .append('circle')
+    .attr("cx", function(d) { 
+      var ret = x(parseTime(d.date));
+      return ret
+    })
+    .attr("cy", function(d) { return y(+d.yield) })
+    .attr("r", 7)
+    .style("fill", "#69b3a2")
+  
+
+    svg.append('g')
+    .append("path")
+      .datum(data)
+      .attr("d", d3.line()
+        .x(function(d) { return x(parseTime(d.date)) })
+        .y(function(d) { return y(+d.gdp) })
+      )
+      .attr("stroke", "black")
+      .style("stroke-width", 4)
+      .style("fill", "none")
+  
+    svg.selectAll('circle2')
+    .data(data)
+    .enter()
+    .append('circle')
+      .attr("cx", function(d) { return x(parseTime(d.date));})
+      .attr("cy", function(d) { return y(+d.gdp) })
+      .attr("r", 7)
+      .style("fill", "red")
+}
+function darwAxis(data){
+  //prepare our date axis domain
+
+  var dates = [];
+  for (let obj of data) {
+    dates.push(parseTime(obj.date));
+  }
+  var domain = d3.extent(dates);
+  domain = [d3.timeYear.floor(domain[0]), d3.timeYear.ceil(domain[1])];
+ 
+  var x = d3.scaleTime()
+  .domain(domain)
+  .range([0, width]);
+
+  /*********DRAW xAxis***********/
+  var xAxis = d3.axisBottom(x);
+   svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis.ticks(d3.timeMonth));
+
+  svg.selectAll(".tick text").remove();
+
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis.ticks(d3.timeYear));
+  
+  svg.append("text")
+    .attr("transform", "translate(" + width/2 + "," + (height + 30) + ")")
+   .style("text-anchor", "middle")
+   .attr("fill", "black")
+   .text("Dates");
+  /*********DRAW YAxis***********/
+  var percentage = [];
+  for (let obj of data) {
+    percentage.push(obj.yield);
+    percentage.push(obj.gdp);
+  }
+  var domain = d3.extent(percentage);
+
+  var y = d3.scaleLinear()
+    .domain(domain)
+    .range([ height, 0 ]);
+    svg.append("g")
+    .call(d3.axisLeft(y));
+
+  /*********PLOT DATA***********/
+  plotdata(data, x, y)
+ 
+}
+var data = [
+  {date: '4/1/97', yield: '0.42375', gdp: '1.66198'},
+  {date: '7/1/97', yield: '0.3384375', gdp: '1.25078'},
+  {date: '7/1/98', yield: '0.171774194', gdp: '0.85874'},
+];
+darwAxis(data);
