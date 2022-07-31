@@ -213,7 +213,7 @@ function drawplots(data, chartId, narration){
 
 
     
-    /********* Create Persistent***********/
+    /********* Create Persistent Narration ***********/
     var minInversionIdx = 0;
     var minInversion = 10;
     for(let i=0; i<data.length; i++) {
@@ -231,19 +231,6 @@ function drawplots(data, chartId, narration){
       }
     }  
 
-    svg.selectAll("persistantlegendsTitle")
-      .data(data)
-      .enter()
-      .filter(function(d, i) { return i == minGDPIdx })
-      .append("text")
-      .text(function(d) { 
-        return narration.title;
-      })
-      .attr("x", function (d) { return  x(parseTime(d.date)) + 20; })
-      .attr("y", function (d) { return  y(+d.gdp) - 50; })
-      .style('fill', 'darkOrange')
-      .attr("font-weight", 300)
-
     svg.selectAll("persistantlegendsText")
     .data(data)
     .enter()
@@ -252,27 +239,48 @@ function drawplots(data, chartId, narration){
     .text(function(d) { 
       return narration.text + d.gdp;
     })
-    .attr("x", function (d) { return  x(parseTime(d.date)) + 20; })
-    .attr("y", function (d) { return  y(+d.gdp) - 30; })
+    .attr("x", function (d) { return  x(parseTime(d.date)) + 0; })
+    .attr("y", function (d) { return  y(+d.gdp) - 40; })
     
+
+
+    svg.selectAll("yieldcurveLegendTitle")
+      .data(data)
+      .enter()
+      .filter(function(d, i) { 
+        return i == minInversionIdx
+      })
+      .append("text")
+      .text(function(d) { 
+        return  narration.yieldcurve + d3.format(",.2f")(d.yield);
+      })
+      .attr("x", function (d) { return  x(parseTime(d.date)) - 30; })
+      .attr("y", function (d, i) {
+        return  y(0) + 25; 
+      })
+      .attr("font-weight", 300)
 
 }
 var narration = [
   {
     title: "The DotCom Bubble",
-    text: "The US Entered Peak Recessions with GDP: "
+    yieldcurve: "Peak Yield Curve Inversion:",
+    text: "As Yield Curve Predicted, The US Entered Peak Recessions with GDP % Change: "
   }, 
   {
     title: "Subprime Mortage Crisis",
-    text: "The US Entered Peak Recessions with GDP: "
+    yieldcurve: "Peak Yield Curve Inversion:",
+    text: "As Yield Curve Predicted, The US Entered Peak Recessions with GDP % Change: "
   },
   {
     title: "Peceful 10 years",
-    text: "The US Entered Peak Recessions with GDP: "
+    yieldcurve: "No inversion happened,lowest 10Y-2Y is:",
+    text: "No Sustained Recessions more than 2 quarters, the worst GDP % change is : "
   },
   {
-    title: "COVID 19 Crisis",
-    text: "The US Entered Peak Recessions with GDP: "
+    title: "COVID-19 Crisis",
+    yieldcurve: "Lowest 10Y - 2Y Yield:",
+    text: "A Close-To-Inversion Yield Curve Predicted COVID Crisis with GDP % Change "
   },
 
 ]
