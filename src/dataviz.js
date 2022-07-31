@@ -49,19 +49,20 @@ for (let i = 0;i < DATE.length; i ++){
 
 var parseTime = d3.timeParse("%m/%d/%y");
 /********* DRAW THE SVG CANVAS***********/
-var margin = {top: 10, right: 100, bottom: 30, left: 30};
-var width = 460 - margin.left - margin.right;
-var height = 400 - margin.top - margin.bottom;
+var margin = {top: 10, right: 0, bottom: 0, left: 50};
+var width = 1000
+var height = 800
 
 
 function drawplots(data, chartId){
   //prepare our date axis domain
   var svg = d3.select(chartId)
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width)
+    .attr("height", height)
+    .attr("float", "right")
   .append("g")
     .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+          "translate(" + 50 + "," + margin.top + ")");
   var dates = [];
   for (let obj of data) {
     dates.push(parseTime(obj.date));
@@ -92,7 +93,6 @@ function drawplots(data, chartId){
    .text("Dates");
   /*********DRAW YAxis***********/
   var percentage = [];
-  var min = 0
   for (let obj of data) {
     percentage.push(parseFloat(obj.yield));
     percentage.push(parseFloat(obj.gdp));
@@ -105,6 +105,24 @@ function drawplots(data, chartId){
     svg.append("g")
     .call(d3.axisLeft(y));
 
+  svg.append("text")
+    .attr("transform", "translate(" + 30 + "," + 30 + ")")
+   .style("text-anchor", "middle")
+   .attr("fill", "black")
+   .text("Percentage%");
+
+   /********* Create Tool Tip***********/
+   var tooltip = d3.select("#dataviz1997")
+   .append("div")
+   .style("opacity", 0)
+   .attr("class", "tooltip")
+   .style("background-color", "white")
+   .style("border", "solid")
+   .style("border-width", "2px")
+   .style("border-radius", "5px")
+   .style("padding", "5px")
+   // Three function that change the tooltip when user hover / move / leave a cell
+  
   /*********PLOT DATA***********/
   svg.append('g')
   .append("path")
@@ -159,6 +177,19 @@ function drawplots(data, chartId){
       .attr("cy", function(d) { return y(+d.gdp) })
       .attr("r", 7)
       .style("fill", "red")
+      .on("mouseover", function(d){
+         tooltip
+        .style("opacity", 1)})
+      .on("mousemove", function(e, d){ 
+        tooltip
+        .html("Exact value: " + d.gdp)
+        .style("left", (d3.pointer(this)[0]+70) + "px")
+        .style("top", (d3.pointer(this)[1]) + "px")
+      })
+      .on("mouseleave", function(){
+        tooltip
+        .style("opacity", 0)});
+
 }
 var data = [
   {date: '4/1/97', yield: '0.42375', gdp: '1.66198'},

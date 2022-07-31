@@ -14,48 +14,58 @@
         <script src="https://d3js.org/d3.v7.min.js"></script>
     </head>
     <body>
-    <div>
         <div>
-        <h1>The Yield Curve Crystal Ball</h1>
+            <h1>The Yield Curve Crystal Ball</h1>
             <div class="slideshow-container">
                  <div class="mySlides fade">
-                    <div class="numbertext">1 / 3</div>
-                    <img src="src/img/crystalball.jpeg" style="width:100%">
-                  </div>
-                
-                  <div class="mySlides fade">
-                    <div class="numbertext">2 / 3</div>
-                    <div class="text" style="height:100%">Caption Two</div>
-                  </div>
-                  <div class="mySlides fade">
-                    <div class="numbertext">3 / 3</div>
-                    <svg id="chart1997" style="width:100%"></svg>
-                  </div>
-                  <div class="mySlides fade">
-                    <div class="numbertext">3 / 3</div>
-                    <svg id="chart2004" style="width:100%"></svg>
-                  </div>
-                  <div class="mySlides fade">
-                    <div class="numbertext">3 / 3</div>
-                    <svg id="chart2010" style="width:100%"></svg>
-                  </div>
-                  <div class="mySlides fade">
-                    <div class="numbertext">3 / 3</div>
-                    <svg id="chart2017" style="width:100%"></svg>
-                  </div>
-                  <!-- Next and previous buttons -->
+                        <img src="src/img/crystalball.jpeg" style="width:70%">
+                </div>
+                <div class="mySlides fade">
+                </div>  
+                <div class="mySlides fade">
+                    <div style="width: 20%; float:left">
+
+                        
+                    </div>
+                    <div id="dataviz1997" style="width: 70%; float:right">
+                        <svg id="chart1997" class="chart"></svg>
+                    </div>
+                </div>
+                <div class="mySlides fade">
+                    <div style="width: 30%; float:left">
+                    </div>
+                    <div id="dataviz2004" style="width: 70%; float:right">
+                        <svg id="chart2004" class="chart"></svg>
+                    </div>
+                </div>
+                <div class="mySlides fade">
+                    <div style="width: 30%; float:left">
+                    </div>
+                    <div style="width: 70%; float:right">
+                        <svg id="chart2010" class="chart"></svg>
+                    </div>
+                </div>
+                <div class="mySlides fade">
+                    <div style="width: 30%; float:left">
+                    </div>
+                    <div style="width: 70%; float:right">
+                        <svg id="chart2017" class="chart"></svg>
+                    </div>
+                </div>
                 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                 <a class="next" onclick="plusSlides(1)">&#10095;</a>
             </div>
-            <div id="slideshowButtons"style="text-align:center"></div>
-                <button class="timebutton" onclick="currentSlide(1)">Cover</button>
-                <button class="timebutton" onclick="currentSlide(2)">Introduction</button>
-                <button class="timebutton" onclick="currentSlide(3)">1997 -2004</button>
-                <button class="timebutton" onclick="currentSlide(4)">2004 - 2010</span>
-                <button class="timebutton" onclick="currentSlide(5)">2010 - 2017</span>
-                <button class="timebutton" onclick="currentSlide(6)">2017 - present</span>
-              </div>
+            
         </div>
+        <div id="slideshowButtons" class="buttonGroup">
+            <button class="timebutton" onclick="currentSlide(1)">Cover</button>
+            <button class="timebutton" onclick="currentSlide(2)">Introduction</button>
+            <button class="timebutton" onclick="currentSlide(3)">1997 -2004</button>
+            <button class="timebutton" onclick="currentSlide(4)">2004 - 2010</button>
+            <button class="timebutton" onclick="currentSlide(5)">2010 - 2017</button>
+            <button class="timebutton" onclick="currentSlide(6)">2017 - present</button>
+        </div>
+    </div>
         
         <script src="src/dataviz.js"></script>
         <script src="src/slideshow.js"></script>
