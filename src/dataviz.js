@@ -112,15 +112,13 @@ function drawplots(data, chartId){
    .text("Percentage%");
 
    /********* Create Tool Tip***********/
-   var tooltip = d3.select("#dataviz1997")
+   var tooltip = d3.select("body")
    .append("div")
-   .style("opacity", 0)
-   .attr("class", "tooltip")
-   .style("background-color", "white")
-   .style("border", "solid")
-   .style("border-width", "2px")
-   .style("border-radius", "5px")
-   .style("padding", "5px")
+   .style("position", "absolute")
+   .style("z-index", "10")
+   .style("visibility", "hidden")
+   .style("background", "white")
+   .text("a simple tooltip");
    // Three function that change the tooltip when user hover / move / leave a cell
   
   /*********PLOT DATA***********/
@@ -177,18 +175,9 @@ function drawplots(data, chartId){
       .attr("cy", function(d) { return y(+d.gdp) })
       .attr("r", 7)
       .style("fill", "red")
-      .on("mouseover", function(d){
-         tooltip
-        .style("opacity", 1)})
-      .on("mousemove", function(e, d){ 
-        tooltip
-        .html("Exact value: " + d.gdp)
-        .style("left", (d3.pointer(this)[0]+70) + "px")
-        .style("top", (d3.pointer(this)[1]) + "px")
-      })
-      .on("mouseleave", function(){
-        tooltip
-        .style("opacity", 0)});
+      .on("mouseover", function(d){tooltip.text(d); return tooltip.style("visibility", "visible");})
+      .on("mousemove", function(event, d){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px").text(d.gdp);})
+      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
 }
 var data = [
