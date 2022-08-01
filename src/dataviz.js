@@ -236,7 +236,10 @@ function drawplots(data, chartId, narration){
     .enter()
     .filter(function(d, i) { return i == minGDPIdx })
     .append("text")
-    .text(function(d) { 
+    .text(function(d, i) {
+      if(narration.noshowgdp){
+        return narration.text;
+      }
       return narration.text + d.gdp;
     })
     .attr("x", function (d) { return  x(parseTime(d.date)) + 0; })
@@ -265,17 +268,18 @@ var narration = [
   {
     title: "The DotCom Bubble",
     yieldcurve: "Peak Yield Curve Inversion:",
-    text: "As Yield Curve Predicted, The US Entered Peak Recessions with GDP % Change: "
+    text: "The US Entered Recessions with GDP % Drop as low as : "
   }, 
   {
     title: "Subprime Mortage Crisis",
     yieldcurve: "Peak Yield Curve Inversion:",
-    text: "As Yield Curve Predicted, The US Entered Peak Recessions with GDP % Change: "
+    text: "The US Entered Recessions with GDP % Drop as low as: "
   },
   {
     title: "Peceful 10 years",
     yieldcurve: "No inversion happened,lowest 10Y-2Y is:",
-    text: "No Sustained Recessions more than 2 quarters, the worst GDP % change is : "
+    noshowgdp: "true",
+    text: "No Sustained Recessions more than 2 quarters"
   },
   {
     title: "COVID-19 Crisis",
