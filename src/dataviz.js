@@ -119,7 +119,7 @@ function drawplots(data, chartId, narration, title){
       .text(function(d) { 
         return "GDP % Change vs. Time"
       })
-      .attr("x", function (d) { return  x(parseTime(d.date)) + 10; })
+      .attr("x", function (d) { return  x(parseTime(d.date)) - 150; })
       .attr("y", function (d) { return  y(+d.gdp) - 20; })
       .style('fill', 'red')
       .attr("font-weight", 300)
@@ -132,7 +132,7 @@ function drawplots(data, chartId, narration, title){
       .text(function(d) { 
         return "10Y Minus 2Y Yield vs. Time"
       })
-      .attr("x", function (d) { return  x(parseTime(d.date)) + 10; })
+      .attr("x", function (d) { return  x(parseTime(d.date)) - 160; })
       .attr("y", function (d) { return  y(+d.yield) - 20; })
       .style('fill', 'blue')
       .attr("font-weight", 300)
