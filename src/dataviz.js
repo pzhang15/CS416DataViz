@@ -54,7 +54,7 @@ var width = 1000
 var height = 800
 
 
-function drawplots(data, chartId, narration){
+function drawplots(data, chartId, narration, title){
   //prepare our date axis domain
   var svg = d3.select(chartId)
     .attr("width", width)
@@ -205,6 +205,7 @@ function drawplots(data, chartId, narration){
       .attr("cy", function(d) { return y(+d.gdp) })
       .attr("r", 7)
       .style("fill", "red")
+
       .on("mouseover", function(d){tooltip.text(d); return tooltip.style("visibility", "visible");})
       .on("mousemove", function(event, d){return tooltip.style("top", (event.pageY-20)+"px").style("left",(event.pageX+20)+"px").text(d.date +  ": " + d3.format(",.2f")(d.gdp) + " GDP % change ");})
       .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
@@ -240,10 +241,10 @@ function drawplots(data, chartId, narration){
       if(narration.noshowgdp){
         return narration.text;
       }
-      return narration.text + d.gdp;
+      return narration.text + d3.format(",.2f")(d.gdp);
     })
-    .attr("x", function (d) { return  x(parseTime(d.date)) + 0; })
-    .attr("y", function (d) { return  y(+d.gdp) - 40; })
+    .attr("x", function (d) { return  x(parseTime(d.date)) - 150; })
+    .attr("y", function (d) { return  y(+d.gdp) - 60; })
     
 
 
@@ -263,17 +264,37 @@ function drawplots(data, chartId, narration){
       })
       .attr("font-weight", 300)
 
+
+      yieldCircle
+      .filter(function(d, i) { 
+        return i == minInversionIdx;
+      })
+      .style("fill", "black")
+
+      gdpCircle
+      .filter(function(d, i) { 
+        return i == minGDPIdx;
+      })
+      .style("fill", "black")
+
+      svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", margin.top + 50)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "32px") 
+        .style("text-decoration", "underline")  
+        .text(title);
 }
 var narration = [
   {
     title: "The DotCom Bubble",
     yieldcurve: "Peak Yield Curve Inversion:",
-    text: "The US Entered Recessions with GDP % Drop as low as : "
+    text: "Recessions with GDP % Drop as low as : "
   }, 
   {
     title: "Subprime Mortage Crisis",
     yieldcurve: "Peak Yield Curve Inversion:",
-    text: "The US Entered Recessions with GDP % Drop as low as: "
+    text: "Recessions with GDP % Drop as low as: "
   },
   {
     title: "Peceful 10 years",
@@ -284,11 +305,11 @@ var narration = [
   {
     title: "COVID-19 Crisis",
     yieldcurve: "Lowest 10Y - 2Y Yield:",
-    text: "A Close-To-Inversion Yield Curve Predicted COVID Crisis with GDP % Change "
+    text: "Brief Recession with GDP % Change "
   },
 
 ]
-drawplots(DATA1997, "#chart1997", narration[0]);
-drawplots(DATA2004, "#chart2004", narration[1]);
-drawplots(DATA2010, "#chart2010", narration[2]);
-drawplots(DATA2017, "#chart2017", narration[3]);
+drawplots(DATA1997, "#chart1997", narration[0], "1997 - 2004");
+drawplots(DATA2004, "#chart2004", narration[1], "2004 - 2010");
+drawplots(DATA2010, "#chart2010", narration[2], "2010 - 2016");
+drawplots(DATA2017, "#chart2017", narration[3], "2017 - 2022");
